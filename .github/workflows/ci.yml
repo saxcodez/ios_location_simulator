@@ -1,0 +1,52 @@
+name: CI
+
+# Laeuft bei jedem Push und Pull Request: prueft, dass sich alle Module
+# fehlerfrei kompilieren lassen und dass die Oberflaeche tatsaechlich
+# startet (headless, ohne echtes iPhone noetig - device.py importiert
+# pymobiledevice3 nirgends direkt, nur ueber Unterprozess-Aufrufe, daher
+# reicht fuer diesen Test Tkinter allein).
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: Python 3.12 einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: System-Abhaengigkeiten (Tkinter, Xvfb)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y python3-tk xvfb
+
+      - name: Python-Abhaengigkeiten installieren
+        run: pip install -r requirements.txt
+
+      - name: Alle Module kompilieren
+        run: python -m py_compile *.py
+
+      - name: Oberflaeche headless starten (Smoke-Test)
+        run: |
+          xvfb-run -a python -c "
+          import sys
+          sys.path.insert(0, '.')
+          from ui import App
+          app = App()
+          app.update()
+          assert app.i18n.lang == 'de'
+          app.on_toggle_language()
+          app.update()
+          assert app.i18n.lang == 'en'
+          app.destroy()
+          print('Smoke-Test OK')
+          "

@@ -1,0 +1,2 @@
+pymobiledevice3>=4.14.0
+tkintermapview>=1.29

@@ -1,0 +1,34 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.Python
+*.egg
+
+# --- Virtuelle Umgebungen ---
+venv/
+.venv/
+env/
+
+# --- PyInstaller-Build-Artefakte (entstehen erst durch build_installer.ps1) ---
+build/
+dist/
+*.spec
+installer_output/
+iOSLocationSimulator-portable.zip
+
+# --- Heruntergeladene / generierte Laufzeitdateien ---
+wintun.dll
+
+# --- Editor / OS ---
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# --- Nutzerdaten (liegen ohnehin in %APPDATA%, nie im Repo) ---
+data.json
+presets.json
+*.log

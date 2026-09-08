@@ -1,0 +1,62 @@
+name: Build & Release
+
+# Laeuft automatisch, sobald ein Versions-Tag wie "v1.0.0" gepusht wird.
+# Baut auf einem echten Windows-Runner (GitHub-gehostet) den kompletten
+# Installer und haengt ihn direkt an das zugehoerige GitHub-Release an -
+# niemand muss build_installer.ps1 von Hand ausfuehren, um eine
+# veroeffentlichte Version zu bekommen.
+#
+# Manueller Tag zum Ausloesen:
+#   git tag v1.0.0
+#   git push origin v1.0.0
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch: {}   # erlaubt manuelles Ausloesen ueber die Actions-Oberflaeche
+
+permissions:
+  contents: write   # noetig, um Dateien an ein Release anzuhaengen
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: Python 3.12 einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Installer bauen
+        shell: pwsh
+        run: ./build_installer.ps1
+
+      - name: Ergebnis-Dateien auflisten
+        shell: pwsh
+        run: |
+          Write-Host "--- installer_output ---"
+          Get-ChildItem -Path installer_output -ErrorAction SilentlyContinue
+          Write-Host "--- Projektwurzel (Fallback-ZIP) ---"
+          Get-ChildItem -Filter "*.zip" -ErrorAction SilentlyContinue
+
+      - name: Build-Artefakte hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: iOSLocationSimulator-windows
+          path: |
+            installer_output/*.exe
+            iOSLocationSimulator-portable.zip
+          if-no-files-found: error
+
+      - name: An GitHub-Release anhaengen
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            installer_output/*.exe
+            iOSLocationSimulator-portable.zip
+          generate_release_notes: true
