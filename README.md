@@ -13,8 +13,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://www.python.org/)
 [![Platform: Windows](https://img.shields.io/badge/Platform-Windows-0078D6.svg)](#)
-[![CI](https://github.com/saxcodez/ios-location-simulator/actions/workflows/ci.yml/badge.svg)](https://github.com/saxcodez/ios-location-simulator/actions/workflows/ci.yml)
-[![Release](https://github.com/saxcodez/ios-location-simulator/actions/workflows/release.yml/badge.svg)](https://github.com/saxcodez/ios-location-simulator/actions/workflows/release.yml)
 
 *by [saxcodez](https://github.com/saxcodez)*
 
